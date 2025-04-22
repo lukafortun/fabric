@@ -1,0 +1,246 @@
+/* we can use webcss variables, fabric compiles that to gtk css.
+   global variables can be stored in :vars */
+
+
+@import url("./colors.css");
+
+:vars {
+    --background: #101010;
+    --foreground: #EEE;
+
+    --window-bg: alpha(var(--background), 1);
+    --module-bg: alpha(var(--foreground), 0.1);
+    --ws-inactive: #EEE;
+    --ws-empty: var(--module-bg);
+    --ws-hover: #FFAAAA;
+    --ws-urgent: #FF66AA;
+}
+
+/* unset so we can style everything from the ground up. */
+* {
+    all: unset;
+    color: var(--foreground);
+    font-size: 12px;
+    font-family: "JetBrains Mono", "Jost*", sans-serif;
+    border-radius: 0px;
+}
+
+button {
+    background-size: 400% 400%;
+}
+
+#logo-box:hover {
+  opacity: 0.5;
+  transition: opacity 0.1s ease;
+}
+
+#bar-inner {
+    padding: 4px 10px 4px 10px;
+    border-bottom: solid 1px;
+    border-color: var(--primary);
+    background-color: var(--window-bg);
+    min-height: 10px;
+    border-radius: 0px;
+  }
+
+#workspaces {
+    padding: 6px;
+    min-width: 0px;
+    background-color: var(--module-bg);
+    margin-left: 1em;
+}
+
+#workspaces>button {
+    padding: 0px 4px;
+    transition: all 0.2s ease-in-out;
+    background-color: var(--ws-inactive);
+}
+
+#workspaces>button>label {
+    font-size: 10px;
+}
+#workspaces>button.empty {
+    background-color: var(--ws-empty);
+}
+#workspaces>button:hover {
+    background-color: var(--ws-hover);
+}
+
+#workspaces>button.urgent {
+    background-color: var(--ws-urgent);
+}
+
+#workspaces>button.active {
+    padding: 0px 20px;
+    background-color: var(--primary);
+    
+}
+
+
+
+#hyprtask,
+#date-time,
+#hyprland-language,
+#hyprland-window {
+    background-color: var(--module-bg);
+    padding: 0px 8px;
+    transition: all 0.2s ease;
+}
+
+#hyprtask:hover,
+#date-time:hover,
+#hyprland-language:hover,
+#hyprland-window:hover {
+    opacity: 0.5;
+}
+
+menu>menuitem>label,
+#date-time>label,
+#hyprland-language>label,
+#hyprland-window>label,
+#hyprland-window {
+    font-weight: 900;
+}
+
+/* system tray */
+#system-tray {
+    padding: 0;
+    margin-right: 2px;
+}
+
+#system-tray> * {
+  transition: all 0.2s ease;
+  background-color: var(--module-bg);
+  padding: 2px 4px;
+  margin: 0px -1px;
+
+}
+
+#system-tray > *:hover {
+    opacity: 0.5;
+    
+}
+
+
+/* menu and menu items (written for the system tray) */
+menu {
+    border: solid 0px;
+    border-radius: 0px;
+    border-color: var(--border-color);
+    background-color: var(--window-bg);
+}
+
+menu>menuitem {
+    border-radius: 0px;
+    background-color: var(--window-bg);
+    padding: 6px;
+    /* margin-left: 2px; */
+    /* margin-right: 2px; */
+}
+
+menu>menuitem:first-child {
+    /* margin-top: 1px; */
+    border-radius: 0px 0px 0px 0px;
+}
+
+menu>menuitem:last-child {
+    /* margin-bottom: 1px; */
+    border-radius: 0px 0px 0px 0px;
+}
+
+menu>menuitem:hover {
+    background-color: var(--primary);
+}
+
+
+#cpu-progress-bar,
+#ram-progress-bar,
+#volume-progress-bar {
+    color: transparent;
+    background-color: transparent
+}
+
+
+#cpu-progress-bar {
+    border: solid 0px alpha(var(--color9), 0.8);
+}
+
+#ram-progress-bar,
+#volume-progress-bar {
+    border: solid 0px var(--border-color);
+}
+
+
+#widgets-container {
+    background-color: var(--module-bg);
+    padding: 2px;
+}
+
+tooltip {
+    border: solid 0px;
+    border-color: var(--border-color);
+    background-color: var(--window-bg);
+}
+
+tooltip>* {
+    padding: 2px 4px
+}
+
+#power-menu{
+  background-color: var(--window-bg);
+  border-bottom: solid 1px;
+  border-right: solid 1px;
+  /* border-left: solid 1px; */
+  border-color: var(--primary);
+  
+}
+
+
+
+#power-button{
+
+  background-color: var(--primary);
+  border-radius: 0%;
+  padding:.7em;
+  transition: .2s all ease;
+  margin:.5em;
+}
+
+
+#power-button:hover{
+  opacity: 0.8;
+}
+
+#power-button:active{
+  background-color : var(--window-bg);
+}
+#search-entry{
+  padding:5px;
+  background-color: var(--module-bg);
+  border-bottom: 1px solid var(--primary);
+  margin-bottom: 5px;
+}
+
+
+
+.launcher-item{
+  padding: 5px;
+  margin-top:2px;
+  transition: background 0.2s ease;
+}
+
+.launcher-item-label{
+  margin-left: 10px;
+}
+
+
+.selected,
+.launcher-item:hover{
+  background: linear-gradient(90deg,var(--module-bg) 0%, var(--module-bg) 97%, var(--primary) 97%, var(--primary) 100%)
+}
+
+#power-rack{
+  background-color: var(--module-bg);
+  padding:0;
+  border-radius: 0;
+}
