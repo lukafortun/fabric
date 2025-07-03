@@ -206,6 +206,9 @@ tooltip>* {
   margin:.5em;
 }
 
+#power-button.open{
+  background-color: var(--module-bg);
+}
 
 #power-button:hover{
   opacity: 0.8;
@@ -214,6 +217,8 @@ tooltip>* {
 #power-button:active{
   background-color : var(--window-bg);
 }
+
+
 #search-entry{
   padding:5px;
   background-color: var(--module-bg);
@@ -236,7 +241,10 @@ tooltip>* {
 
 .selected,
 .launcher-item:hover{
-  background: linear-gradient(90deg,var(--module-bg) 0%, var(--module-bg) 97%, var(--primary) 97%, var(--primary) 100%)
+  background: linear-gradient(90deg,var(--module-bg) 0%, 
+  var(--module-bg) 93.5%, var(--primary) 93.5%, var(--primary) 94%,
+  var(--module-bg) 94%, var(--module-bg) 95%, var(--primary) 95%, var(--primary) 96%,
+  var(--module-bg) 96%, var(--module-bg) 97%, var(--primary) 97%, var(--primary) 100%)
 }
 
 #power-rack{

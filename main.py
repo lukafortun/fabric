@@ -13,14 +13,15 @@ if __name__ == "__main__":
     socket_listener = SocketListener()
 
 
-    box = PowerMenu()
-    bar = Bar(box)
-    app = Application("bar", bar,box)
+    pm = PowerMenu()
+    bar = Bar(pm)
+    app = Application("bar", bar,pm)
     generate_css_variables_from_env()
 
     app.set_stylesheet_from_file(get_relative_path("stylesheets/main.css"))
 
-    socket_listener.add_command("toggle", box.toggle_visibility)
+    socket_listener.add_command("toggle_power_menu", pm.toggle_visibility)
+    socket_listener.add_command("toggle_power_button", pm.toggle_menu_button)
     socket_listener.start()
 
     app.run()

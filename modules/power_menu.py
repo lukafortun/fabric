@@ -14,6 +14,8 @@ from gi.repository import GLib, Gdk
 
 
 class PowerMenu(Window):
+    
+
     class PowerButton(Box):
         def toggle(self):
             # self.revealer.set_transition_type(Gtk.RevealerTransitionType.SLIDE_LEFT)
@@ -22,11 +24,14 @@ class PowerMenu(Window):
                 self.revealer.set_reveal_child(False)
                 # self.revealer.unreveal()
                 self.powerbutton.children[0].set_from_file("assets/power.svg")
+                self.powerbutton.get_style_context().remove_class("open")
             else:
                 # self.box.show_all()
+                self._all_apps = get_desktop_applications()
                 self.revealer.set_reveal_child(True)
                 # self.revealer.reveal()
                 self.powerbutton.children[0].set_from_file("assets/close.svg")
+                self.powerbutton.get_style_context().add_class("open")
             self.active = not(self.active)
             
 
@@ -68,15 +73,50 @@ class PowerMenu(Window):
 
 
             
+    def scroll_to_selected(self, button):
+        def scroll():
+            adj = self.apps.get_vadjustment()
+            alloc = button.get_allocation()
+            if alloc.height == 0:
+                return False  # Retry if allocation isn't ready
+
+            y = alloc.y
+            height = alloc.height
+            page_size = adj.get_page_size()
+            current_value = adj.get_value()
+
+            # Calculate visible boundaries
+            visible_top = current_value
+            visible_bottom = current_value + page_size
+
+            if y < visible_top:
+                # Item above viewport - align to top
+                adj.set_value(y)
+            elif y + height > visible_bottom:
+                # Item below viewport - align to bottom
+                new_value = y + height - page_size
+                adj.set_value(new_value)
+            # No action if already fully visible
+            return False
+        GLib.idle_add(scroll)
 
 
     class LauncherItem(Button):
+        def on_button_mouse_click(self, widget, event):
+            if event.type == Gdk.EventType.BUTTON_PRESS:
+                self.launch()
+            return False
+
+
         def launch(self):
             self.app.launch()
             self.menu.toggle_visibility()
         def __init__(self, app, menu):
-            super().__init__(style_classes="launcher-item",
-                             on_clicked=lambda *_: (app.launch(), self.menu.toggle_visibility()))
+            super().__init__(style_classes="launcher-item")
+
+            self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+            self.connect("button-press-event", self.on_button_mouse_click)
+
             self.menu = menu
             self.app = app
             self.image = Image(pixbuf=app.get_icon_pixbuf(size=20),)
@@ -85,19 +125,29 @@ class PowerMenu(Window):
             self.box.add(self.image)
             self.box.add(self.label)
             self.add(self.box)
+    
+    def toggle_menu_button(self):
+        if not self.is_active:
+            self.toggle_visibility()
+        if not self.power_button.active:
+            GLib.timeout_add(400, lambda: (self.power_button.toggle(), False)[1])
 
 
-    def toggle_visibility(self):
-        # print(f"[toggle_visibility] called — is_active = {self.is_active}, visible = {self.get_visible()}, reveal_child = {self.revealer.get_reveal_child()}")
-        
+
+
+    def toggle_visibility(self): 
         if self.is_active:
             self.revealer.set_reveal_child(False)
             self.is_active = False
             GLib.timeout_add(self.revealer.transition_duration, lambda: (self.set_visible(False), False)[1])
+            if self.power_button.active:
+                self.power_button.toggle()
+
         else:
             self.set_visible(True)
             self.revealer.set_reveal_child(True)
             self.is_active = True
+            self._all_apps = get_desktop_applications()
 
             self.entry.set_text("")
             self.entry.grab_focus()
@@ -107,7 +157,7 @@ class PowerMenu(Window):
 
 
     def keypressed(self, widget, event):
-        print(event.keyval)
+
         match event.keyval:
             case Gdk.KEY_Down:
                 self.update_selection(self.selected_index+1)
@@ -117,8 +167,12 @@ class PowerMenu(Window):
                 self.viewport.get_children()[self.selected_index].launch()
             case Gdk.KEY_KP_Enter: 
                 self.viewport.get_children()[self.selected_index].launch()
-            case Gdk.KEY_Escape:
-                self.toggle_visibility()
+            # case Gdk.KEY_Escape:
+            #     self.viewport.get_children()[self.selected_index].launch()
+                # self.toggle_visibility()
+
+
+
             # case Gdk.KEY_Super_L:
             #     self.toggle_visibility()
 
@@ -134,12 +188,15 @@ class PowerMenu(Window):
         self.bake_viewport(entry.get_text())
 
     def update_selection(self, new_index):
+        print(self.filtered_apps[new_index].display_name)
         if self.selected_index != -1 and self.selected_index < len(self.viewport.get_children()):
             current_button = self.viewport.get_children()[self.selected_index]
             current_button.get_style_context().remove_class("selected")
+            self.scroll_to_selected(current_button)
         if new_index != -1 and new_index < len(self.viewport.get_children()):
             new_button = self.viewport.get_children()[new_index]
             new_button.get_style_context().add_class("selected")
+            self.scroll_to_selected(new_button)
             self.selected_index = new_index
         else:
             self.selected_index = -1
@@ -159,7 +216,7 @@ class PowerMenu(Window):
             # visible=False, #False
             # all_visible=False, #False
             margin="1px 0px 0px 0px",
-            on_key_release_event=self.keypressed
+            on_key_press_event=self.keypressed
         )
 
         self.steal_input()
@@ -170,7 +227,7 @@ class PowerMenu(Window):
 
         self.filtered_apps = self._all_apps
 
-        self.selected_index = 0
+        self.selected_index = 2
 
         self.illustration = Svg("assets/evangelion.svg",size=200)
 
@@ -186,7 +243,7 @@ class PowerMenu(Window):
                         notify_text=self.notify_text,
                     )
 
-        self.update_selection(0)
+        self.update_selection(2)
 
 
 
@@ -218,6 +275,7 @@ class PowerMenu(Window):
         #     ],
         #     orientation="v",
         #     style="padding:0.5em;")
+        self.power_button = self.PowerButton()
         
         self.inner_box = Box(children=[
             Box(name="test", children=[self.applauncher]),
@@ -225,7 +283,7 @@ class PowerMenu(Window):
                 style="margin:0.5em;",
                 start_children=Box(children=self.illustration),
                 center_children=Box(),
-                end_children=Box(children=self.PowerButton()),
+                end_children=Box(children=self.power_button),
             )
         ],
         orientation="v",
