@@ -21,7 +21,7 @@
     all: unset;
     color: var(--foreground);
     font-size: 12px;
-    font-family: "JetBrains Mono", "Jost*", sans-serif;
+    font-family:  "JetBrains Mono", "Font Awesome 6 Free", "Font Awesome 6 Brands","Jost*", sans-serif;
     border-radius: 0px;
 }
 

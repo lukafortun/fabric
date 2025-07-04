@@ -1,4 +1,5 @@
 from modules.battery_widget import BatteryWidget
+from modules.sound_widget import SoundWidget
 from fabric.widgets.svg import Svg
 from fabric.widgets.box import Box
 from fabric.widgets.datetime import DateTime
@@ -89,6 +90,7 @@ class Bar(Window):
 
 
         self.test_bat = BatteryWidget()
+        self.test_snd = SoundWidget()
 
         self.button = Button(name="hyprtask")
         
@@ -118,6 +120,7 @@ class Bar(Window):
                     # self.status_container,
                     self.system_tray,
                     self.test_bat,
+                    self.test_snd,
                     self.date_time,
                     self.language,
                     self.button,

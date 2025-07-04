@@ -76,12 +76,16 @@ class BatteryService(Service):
     
 
 class BatteryWidget(Button):
+    def on_click(self, button):
+        self.full = not self.full
+        self.update_bat()
 
     def __init__(self, **kwargs):
         super().__init__(name="hyprland-window",**kwargs)
-         
+        self.full = False 
         self.battery = BatteryService()
         
+        self.connect("clicked", self.on_click)
         self.add(Label(""))
 
         self.battery.connect(
@@ -98,7 +102,10 @@ class BatteryWidget(Button):
 
  
     def update_bat(self):
-        self.children[0].set_label(self.battery.logo +" "+ str(self.battery.percent)+"%" + ("\uf0e7" if self.battery.is_plugged else ""))
+        self.children[0].set_label(self.battery.logo 
+            + f" {str(self.battery.percent)+"%" if self.full else ""}" 
+            + ("\uf0e7" if self.battery.is_plugged else "")
+        )
         if not(self.battery.is_plugged):
             self.children[0].set_markup
             self.children[0].set_has_tooltip(True)
