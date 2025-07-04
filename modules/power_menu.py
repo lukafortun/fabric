@@ -167,9 +167,8 @@ class PowerMenu(Window):
                 self.viewport.get_children()[self.selected_index].launch()
             case Gdk.KEY_KP_Enter: 
                 self.viewport.get_children()[self.selected_index].launch()
-            # case Gdk.KEY_Escape:
-            #     self.viewport.get_children()[self.selected_index].launch()
-                # self.toggle_visibility()
+            case Gdk.KEY_Escape:
+                self.toggle_visibility()
 
 
 
