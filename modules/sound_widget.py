@@ -4,10 +4,8 @@ from fabric.widgets.button import Button
 from fabric.utils import (
     invoke_repeater,
 )
-import psutil
 import pulsectl
 import math
-import fontawesome as fa
 
 class SoundService(Service):
     @Signal 
@@ -24,6 +22,7 @@ class SoundService(Service):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.pulse = pulsectl.Pulse('volume-reader')
+        self.name = self.pulse.server_info().default_sink_name
         self.percent = 10000
         self.logo = ""
         self.mute = False
@@ -35,7 +34,6 @@ class SoundService(Service):
     def update_values(self):
         pulse = self.pulse 
         default_sink_name = pulse.server_info().default_sink_name
-
         default_sink = None
         for sink in pulse.sink_list():
             if sink.name == default_sink_name:
@@ -43,6 +41,12 @@ class SoundService(Service):
                 break
 
         sink = default_sink
+
+        if self.name!= sink.description:
+            self.name = sink.description
+            self.bat_changed(self.percent)
+
+
         new_snd_lev = math.floor(sink.volume.values[0]*100)
         is_muted = sink.mute
         if new_snd_lev!= self.percent or self.mute!=is_muted:
@@ -76,7 +80,7 @@ class SoundWidget(Button):
         self.update_bat()
 
     def __init__(self, **kwargs):
-        super().__init__(name="hyprland-window",**kwargs)
+        super().__init__(name="sound",**kwargs)
          
         self.sound = SoundService()
         self.full = False
@@ -99,8 +103,9 @@ class SoundWidget(Button):
  
     def update_bat(self):
         self.children[0].set_label(self.sound.logo 
-            + f" {str(self.sound.percent)+"%" if self.full else ""}" 
+            + f"{" "+str(self.sound.percent)+"%" if self.full else ""}" 
         )
-        self.children[0].set_has_tooltip(False)
+        self.children[0].set_tooltip_text(f"Sound level : {self.sound.percent}%\n{self.sound.name}")
+
 
 

@@ -14,6 +14,8 @@ from fabric.utils import (
 )
 from gi.repository import GLib, Gdk
 from utils.svg_utils import recolor_svgfile_env
+from modules.network_widget import NetworkWidget
+from modules.network import NetworkService
 
 class Logo(Button):
     def __init__(self, **kwargs):
@@ -89,11 +91,19 @@ class Bar(Window):
 
 
 
+        self.network_service = NetworkService()
         self.test_bat = BatteryWidget()
         self.test_snd = SoundWidget()
+        self.test_net = NetworkWidget(self.network_service)
 
         self.button = Button(name="hyprtask")
-        
+       
+        self.center = Box(name="control-center",
+                          children=[
+                            self.test_bat,
+                            self.test_snd,
+                            self.test_net
+                          ])
 
         self.children = CenterBox(
             name="bar-inner",
@@ -119,8 +129,7 @@ class Bar(Window):
                 children=[
                     # self.status_container,
                     self.system_tray,
-                    self.test_bat,
-                    self.test_snd,
+                    self.center,
                     self.date_time,
                     self.language,
                     self.button,

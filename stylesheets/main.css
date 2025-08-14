@@ -76,7 +76,18 @@ button {
     
 }
 
+#control-center{
+    background-color: var(--module-bg);
+    padding: 0px 0px 0px 8px
+}
+#control-center *{
+    padding: 0px 4px 0px 0px;
+    margin:0;
+}
 
+#control-center *:hover{
+  opacity:0.5;
+}
 
 #hyprtask,
 #date-time,
@@ -225,7 +236,6 @@ tooltip>* {
   border-bottom: 1px solid var(--primary);
   margin-bottom: 5px;
 }
-
 
 
 .launcher-item{
